@@ -9,6 +9,12 @@ on:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+
+    # FIX: Tambahkan blok 'permissions' ini
+    # Ini memberikan izin kepada Actions untuk membuat rilis.
+    permissions:
+      contents: write # Diperlukan untuk membuat rilis dan mengunggah aset
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,7 +29,6 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
-          # Perintah untuk menjalankan GoReleaser, akan membaca file .goreleaser.yml
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
