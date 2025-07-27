@@ -52,7 +52,7 @@ var (
 	projectDir string
 )
 
-var createCmd = &cobra.Command{
+var cliCmd = &cobra.Command{
 	Use:   "cli [project-name]",
 	Short: "Create a new DocuBook project",
 	Long:  "Create a new DocuBook documentation site with a modern and clean design.",
@@ -325,7 +325,7 @@ func runCommand(ctx context.Context, name string, args ...string) error {
 }
 
 func init() {
-	createCmd.Flags().BoolVarP(&debugMode, "debug", "d", false, "Enable debug mode (shows detailed output)")
-	createCmd.Flags().StringVarP(&targetDir, "dir", "D", ".", "Directory to create the project in")
-	rootCmd.AddCommand(createCmd)
+	cliCmd.Flags().BoolVarP(&debugMode, "debug", "d", false, "Enable debug mode (shows detailed output)")
+	cliCmd.Flags().StringVarP(&targetDir, "dir", "D", ".", "Directory to create the project in")
+	rootCmd.AddCommand(cliCmd)
 }
