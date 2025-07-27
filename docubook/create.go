@@ -64,7 +64,7 @@ var createCmd = &cobra.Command{
 		}
 
 		// Set up project directory
-		projectName := "cli-docubook"
+		projectName := "docs"
 		if len(args) > 0 {
 			projectName = args[0]
 		}
