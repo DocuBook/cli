@@ -1,0 +1,36 @@
+# .goreleaser.yml
+# Konfigurasi dasar untuk GoReleaser
+builds:
+  - main: ./
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: docubook
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
+archives:
+  - format: tar.gz
+    # Opsi ini membuat nama arsip lebih bersih, cth: docubook_1.2.3_Linux_x86_64.tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    # Mengabaikan commit yang tidak relevan di changelog
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - 'merge'
