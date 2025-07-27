@@ -1,114 +1,144 @@
-# DocuBook CLI
+# 🚀 DocuBook CLI
 
-DocuBook CLI written on GO! Initialize, Update, Push and Deploy your Docs direct into Terminal.
+DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy documentation directly from your terminal.
 
-## Installation
+## 📋 Table of Contents
+- [System Requirements](#-system-requirements)
+- [📥 Installation](#-installation)
+  - [Method 1: Using Go Install (Recommended)](#method-1-using-go-install-recommended)
+  - [Method 2: Build from Source](#method-2-build-from-source)
+- [⚙️ Configuration](#️-configuration)
+- [🚀 Usage](#-usage)
+- [🔧 Troubleshooting](#-troubleshooting)
+  - [Command Not Found](#command-not-found)
+  - [Permission Denied](#permission-denied)
+  - [Update to Latest Version](#update-to-latest-version)
 
-### Option 1: Using Go Install (Recommended)
+## 💻 System Requirements
 
-1. Ensure Go (version 1.24 or newer) is installed on your system
-2. Run the following command to install globally:
+- Go version 1.24 or newer
+- Git (for version control)
+- Internet connection (for downloading dependencies)
+
+## 📥 Installation
+
+### Method 1: Using Go Install (Recommended)
+
+1. Ensure Go is installed on your system:
+   ```bash
+   go version
+   ```
+   Make sure the installed version is 1.24 or newer.
+
+2. Install DocuBook CLI globally:
    ```bash
    go install github.com/DocuBook/cli@latest
    ```
-3. Make sure `$GOPATH/bin` is in your system's PATH:
-   ```bash
-   # Check if $GOPATH/bin is in PATH
-   echo $PATH | grep -q $(go env GOPATH)/bin && echo "✓ GOPATH/bin is in PATH" || echo "GOPATH/bin is NOT in PATH"
 
-   # If not in PATH, add it (for current session only)
-   export PATH=$PATH:$(go env GOPATH)/bin
-   ```
+3. Add `$GOPATH/bin` to your PATH:
+   - For Zsh (macOS):
+     ```bash
+     echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+     source ~/.zshrc
+     ```
+   - For Bash:
+     ```bash
+     echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bash_profile
+     source ~/.bash_profile
+     ```
 
 4. Verify the installation was successful:
    ```bash
-   docubook --version
+   docubook --help
    ```
 
-### Option 2: Build from Source
+### Method 2: Build from Source
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/DocuBook/cli.git
    cd cli
    ```
+
 2. Install dependencies:
    ```bash
    go mod tidy
    ```
+
 3. Build the binary:
    ```bash
    go build -o docubook
    ```
+
 4. (Optional) Move the binary to your system's PATH
 
-## Usage
+## ⚙️ Configuration
+
+### Adding to PATH
+
+Make sure `$GOPATH/bin` is in your PATH. If not, follow the installation steps above.
+
+### Verifying Installation
+
+To ensure the installation was successful, run:
+```bash
+docubook --help
+```
+
+## 🚀 Usage
 
 1. Open a terminal and navigate to your project directory
-2. Run the command:
+2. To start a new project, run:
    ```bash
    docubook cli
    ```
-3. Follow the on-screen instructions to create a new project
+3. Follow the on-screen instructions to complete project configuration
 
-## System Requirements
+## 🔧 Troubleshooting
 
-- Go 1.24 or newer
-- Git (for version control)
-- Internet access (for downloading dependencies)
+### Command Not Found
 
-## Optional Configuration
+If you see `command not found: docubook`:
 
-### Adding $GOPATH/bin to PATH
-
-To make `docubook` command available globally, add the following line to your shell configuration file:
-
-For Zsh (recommended for macOS):
-```bash
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
-source ~/.zshrc
-```
-
-For Bash:
-```bash
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bash_profile
-source ~/.bash_profile
-```
-
-## Troubleshooting
-
-### Command not found: docubook
-If you get this error after installation:
-
-1. Verify Go is installed and in your PATH:
+1. Check if Go is installed:
    ```bash
    go version
    ```
 
-2. Check if the binary was installed:
+2. Verify the binary was installed:
    ```bash
    ls -l $(go env GOPATH)/bin/docubook
    ```
 
-3. If the file exists but you still get the error, add the Go bin directory to your PATH (see Optional Configuration above).
+3. If the file exists but still can't be executed, ensure `$GOPATH/bin` is in your PATH.
 
 ### Permission Denied
-If you encounter permission issues:
 
+If you encounter a permission error:
 ```bash
 chmod +x $(go env GOPATH)/bin/docubook
 ```
 
-### Outdated Version
+### Update to Latest Version
+
 To update to the latest version:
 ```bash
 go install github.com/DocuBook/cli@latest
 ```
 
-### Still having issues?
-- Make sure your Go environment is set up correctly:
+### Still Having Issues?
+
+- Check your Go configuration:
   ```bash
   go env
   ```
-- Check for error messages during installation
-- Ensure you have write permissions to the Go bin directory
+- Look for any error messages during installation
+- Verify you have write permissions to the Go bin directory
+
+## 🤝 Contributing
+
+We welcome contributions! Please open an issue or submit a pull request on [GitHub](https://github.com/DocuBook/cli).
+
+## 📜 License
+
+[MIT](LICENSE) © DocuBook
