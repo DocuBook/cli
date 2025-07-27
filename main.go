@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -16,8 +15,7 @@ func main() {
 
 	// Check for version flag
 	if len(os.Args) > 1 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
-		fmt.Printf("DocuBook CLI\nVersion: %s\nCommit: %s\nBuild Time: %s\n",
-			cmd.Version, cmd.Commit, cmd.BuildTime)
+		fmt.Printf("DocuBook CLI\nVersion: %s\n", cmd.Version)
 		return
 	}
 

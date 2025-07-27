@@ -36,7 +36,7 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 2. Install DocuBook CLI globally:
    ```bash
-   go install github.com/DocuBook/cli@latest
+   go install github.com/DocuBook/cli/docubook@latest
    ```
 
    This will install the binary as `docubook` in `$GOPATH/bin`.
@@ -88,10 +88,10 @@ Make sure `$GOPATH/bin` is in your PATH. If not, follow the installation steps a
 
 To ensure the installation was successful, run:
 ```bash
-docubook --help
+docubook --version
 ```
 
-You should see a help message showing the available commands.
+You should see a version message.
 
 ## 🚀 Usage
 
