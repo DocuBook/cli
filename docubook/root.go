@@ -1,4 +1,4 @@
-package docubook
+package main
 
 import (
 	"fmt"

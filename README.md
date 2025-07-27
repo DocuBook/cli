@@ -36,7 +36,7 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 2. Install DocuBook CLI globally:
    ```bash
-   go install github.com/DocuBook/cli/cmd/docubook@latest
+   go install github.com/DocuBook/cli/docubook@latest
    ```
 
    This will install the binary as `docubook` in `$GOPATH/bin`.
@@ -139,10 +139,11 @@ chmod +x $(go env GOPATH)/bin/docubook
 
 ### Update to Latest Version
 
-To update to the latest version:
+To update to the latest version of DocuBook CLI, run the following command in your terminal:
 ```bash
-go install github.com/DocuBook/cli@latest
+go install github.com/DocuBook/cli/docubook@latest
 ```
+This command will update the `docubook` binary in your `$GOPATH/bin` directory.
 
 ### Uninstalling DocuBook CLI
 
