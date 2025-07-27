@@ -1,4 +1,4 @@
-module github.com/wildan/docubook/cli
+module github.com/DocuBook/cli
 
 go 1.24.4
 

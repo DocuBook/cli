@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/wildan/docubook/cli/cmd"
+	"github.com/DocuBook/cli/cmd"
 )
 
 func main() {
