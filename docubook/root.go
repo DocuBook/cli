@@ -23,7 +23,7 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "docubook",
-	Short: "DocuBook CLI - Create beautiful documentation",
+	Short: "DocuBook CLI helps you create and manage beautiful documentation sites.",
 	Long: `DocuBook CLI helps you create and manage beautiful documentation sites.
 With DocuBook, you can quickly set up a documentation site with a modern look and feel.
 
@@ -31,6 +31,13 @@ Find more information at https://docubook.pro`,
 	Version:       Version,
 	SilenceUsage:  true,
 	SilenceErrors: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		if v, _ := cmd.Flags().GetBool("version"); v {
+			PrintVersion()
+			return
+		}
+		cmd.Help()
+	},
 }
 
 func init() {
