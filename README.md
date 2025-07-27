@@ -6,6 +6,7 @@ DocuBook CLI is a command-line tool for creating and managing beautiful document
 
 You can install the DocuBook CLI using Go's `install` command:
 
+1. Install the package:
    ```bash
    go install github.com/DocuBook/cli@latest
    ```
