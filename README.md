@@ -4,15 +4,19 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 ## 📋 Table of Contents
 - [System Requirements](#-system-requirements)
-- [📥 Installation](#-installation)
+- [Installation](#-installation)
   - [Method 1: Using Go Install (Recommended)](#method-1-using-go-install-recommended)
   - [Method 2: Build from Source](#method-2-build-from-source)
-- [⚙️ Configuration](#️-configuration)
-- [🚀 Usage](#-usage)
-- [🔧 Troubleshooting](#-troubleshooting)
+- [Configuration](#️-configuration)
+  - [Adding to PATH](#adding-to-path)
+  - [Verifying Installation](#verifying-installation)
+- [Usage](#-usage)
+- [Troubleshooting](#-troubleshooting)
   - [Command Not Found](#command-not-found)
   - [Permission Denied](#permission-denied)
   - [Update to Latest Version](#update-to-latest-version)
+  - [Uninstalling DocuBook CLI](#uninstalling-docubook-cli)
+  - [Still Having Issues?](#still-having-issues)
 
 ## 💻 System Requirements
 
@@ -24,18 +28,20 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 ### Method 1: Using Go Install (Recommended)
 
-1. Ensure Go is installed on your system:
+1. Make sure Go is installed on your system:
    ```bash
    go version
    ```
-   Make sure the installed version is 1.24 or newer.
+   Ensure the installed version is 1.24 or newer.
 
 2. Install DocuBook CLI globally:
    ```bash
    go install github.com/DocuBook/cli@latest
    ```
 
-3. Add `$GOPATH/bin` to your PATH:
+   This will install the binary as `docubook` in `$GOPATH/bin`.
+
+3. Ensure `$GOPATH/bin` is in your PATH:
    - For Zsh (macOS):
      ```bash
      echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
@@ -49,7 +55,7 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 4. Verify the installation was successful:
    ```bash
-   docubook --help
+   docubook --version
    ```
 
 ### Method 2: Build from Source
@@ -67,7 +73,7 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 3. Build the binary:
    ```bash
-   go build -o docubook
+   go build -o docubook .
    ```
 
 4. (Optional) Move the binary to your system's PATH
@@ -85,6 +91,8 @@ To ensure the installation was successful, run:
 docubook --help
 ```
 
+You should see a help message showing the available commands.
+
 ## 🚀 Usage
 
 1. Open a terminal and navigate to your project directory
@@ -93,6 +101,16 @@ docubook --help
    docubook cli
    ```
 3. Follow the on-screen instructions to complete project configuration
+
+Complete example:
+```bash
+# Create a new project directory
+mkdir my-documentation
+cd my-documentation
+
+# Initialize DocuBook project
+docubook cli
+```
 
 ## 🔧 Troubleshooting
 
@@ -110,7 +128,7 @@ If you see `command not found: docubook`:
    ls -l $(go env GOPATH)/bin/docubook
    ```
 
-3. If the file exists but still can't be executed, ensure `$GOPATH/bin` is in your PATH.
+3. If the file exists but can't be executed, ensure `$GOPATH/bin` is in your PATH.
 
 ### Permission Denied
 
@@ -128,14 +146,14 @@ go install github.com/DocuBook/cli@latest
 
 ### Uninstalling DocuBook CLI
 
-To uninstall DocuBook CLI globally, simply remove the binary from your system:
+To uninstall DocuBook CLI:
 
 1. Remove the binary:
    ```bash
    rm $(go env GOPATH)/bin/docubook
    ```
 
-2. (Optional) If you added the export line to your shell configuration file, you can remove it:
+2. (Optional) If you added the export line to your shell configuration, you can remove it:
    - For Zsh (macOS):
      ```bash
      sed -i '' '/export PATH=\$PATH:$(go env GOPATH)\/bin/d' ~/.zshrc
@@ -158,3 +176,4 @@ To uninstall DocuBook CLI globally, simply remove the binary from your system:
   ```
 - Look for any error messages during installation
 - Verify you have write permissions to the Go bin directory
+- Ensure `$GOPATH` is properly configured
