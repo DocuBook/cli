@@ -1,3 +1,5 @@
+// root.go (Improved Version)
+
 package main
 
 import (
@@ -8,15 +10,11 @@ import (
 )
 
 const (
-	// AppName is the name of the application
-	AppName = "DocuBook CLI"
-	// DefaultVersion is the default version when not set via ldflags
+	AppName        = "DocuBook CLI"
 	DefaultVersion = "0.1.0"
 )
 
-// These variables are set during build time via ldflags
 var (
-	// Version holds the application version
 	Version = DefaultVersion
 )
 
@@ -38,32 +36,17 @@ Available Commands:
 
 Flags:
   -h, --help      help for docubook
-  -v, --version   Print the version information
-
-Use "docubook [command] --help" for more information about a command.`,
-	Version:       Version,
+  --version   Print the version information`,
+	Version:       Version, // This is all you need for version handling
 	SilenceUsage:  true,
 	SilenceErrors: true,
-	Run: func(cmd *cobra.Command, args []string) {
-		if v, _ := cmd.Flags().GetBool("version"); v {
-			PrintVersion()
-			return
-		}
-		cmd.Help()
-	},
+	// No 'Run' function is needed. If no subcommand is given,
+	// Cobra will automatically show the help text.
 }
 
 func init() {
-	// Set up version template
+	// Customize the output of the automatic --version flag
 	rootCmd.SetVersionTemplate(fmt.Sprintf("%s\nVersion: {{.Version}}\n", AppName))
-
-	// Add global flags
-	rootCmd.Flags().BoolP("version", "v", false, "Print the version information")
-}
-
-// PrintVersion prints the application version information
-func PrintVersion() {
-	fmt.Printf("%s\nVersion: %s\n", AppName, Version)
 }
 
 // Execute executes the root command and handles any errors
