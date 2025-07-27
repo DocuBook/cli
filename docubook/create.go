@@ -1,4 +1,4 @@
-// version 0.3.0
+// version 0.3.1
 package main
 
 import (
@@ -33,8 +33,8 @@ var (
 	projectDir string
 )
 
-var createCmd = &cobra.Command{
-	Use:   "create [project-name]",
+var initCmd = &cobra.Command{
+	Use:   "init [project-name]",
 	Short: "Create a new DocuBook project",
 	Long:  "Create a new DocuBook documentation site with a modern and clean design.",
 	Args:  cobra.MaximumNArgs(1),
@@ -163,7 +163,7 @@ func (m model) View() string {
 		sb.WriteString(successStyle.Render("✓ All done!") + "\n\n")
 		sb.WriteString("Next steps:\n")
 		sb.WriteString(fmt.Sprintf("  %s %s\n", commandStyle.Render("cd"), directoryStyle.Render(filepath.Base(projectDir))))
-		sb.WriteString(fmt.Sprintf("  %s\n", commandStyle.Render("docubook create")))
+		sb.WriteString(fmt.Sprintf("  %s\n", commandStyle.Render("create")))
 	}
 	return appStyle.Render(sb.String())
 }
@@ -229,7 +229,7 @@ func min(a, b int) int {
 }
 
 func init() {
-	createCmd.Flags().BoolVarP(&debugMode, "debug", "d", false, "Enable debug mode")
-	createCmd.Flags().StringVarP(&targetDir, "dir", "D", ".", "Directory to create the project in")
-	rootCmd.AddCommand(createCmd)
+	initCmd.Flags().BoolVarP(&debugMode, "debug", "d", false, "Enable debug mode")
+	initCmd.Flags().StringVarP(&targetDir, "dir", "D", ".", "Directory to create the project in")
+	rootCmd.AddCommand(initCmd)
 }

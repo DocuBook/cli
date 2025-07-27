@@ -1,4 +1,4 @@
-// version 0.3.0
+// version 0.3.1
 package main
 
 import (
@@ -10,7 +10,7 @@ import (
 
 const (
 	AppName        = "DocuBook CLI"
-	DefaultVersion = "0.3.0" // initial version
+	DefaultVersion = "0.3.1" // initial version
 )
 
 var (
