@@ -1,7 +1,9 @@
 # .goreleaser.yml
-# Konfigurasi dasar untuk GoReleaser
+# Konfigurasi untuk GoReleaser
 builds:
-  - main: ./
+  - # Konfigurasi untuk build utama
+    # FIX: Tentukan path yang benar ke paket main Anda.
+    main: ./docubook
     goos:
       - linux
       - windows
