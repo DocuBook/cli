@@ -11,7 +11,7 @@ const (
 	// AppName is the name of the application
 	AppName = "DocuBook CLI"
 	// DefaultVersion is the default version when not set via ldflags
-	DefaultVersion = "0.2.3"
+	DefaultVersion = "0.2.4"
 )
 
 // These variables are set during build time via ldflags

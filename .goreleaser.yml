@@ -28,7 +28,7 @@ snapshot:
 changelog:
   sort: asc
   filters:
-    # Mengabaikan commit yang tidak relevan di changelog
+    # Mengabaikan commit yang tidak relevan di changelog -skip
     exclude:
       - '^docs:'
       - '^test:'
