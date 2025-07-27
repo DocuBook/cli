@@ -1,14 +1,6 @@
+// docubook/main.go
 package main
 
-import (
-	"os"
-)
-
 func main() {
-	if len(os.Args) > 1 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
-		PrintVersion()
-		return
-	}
-
 	Execute()
 }
