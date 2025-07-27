@@ -1,5 +1,3 @@
-// root.go (Improved Version)
-
 package main
 
 import (
@@ -10,11 +8,15 @@ import (
 )
 
 const (
-	AppName        = "DocuBook CLI"
+	// AppName is the name of the application
+	AppName = "DocuBook CLI"
+	// DefaultVersion is the default version when not set via ldflags
 	DefaultVersion = "0.2.0"
 )
 
+// These variables are set during build time via ldflags
 var (
+	// Version holds the application version
 	Version = DefaultVersion
 )
 
@@ -31,17 +33,16 @@ Usage:
   docubook [command]
 
 Available Commands:
-  cli         to initialize the CLI equipment
   create      Create a new DocuBook project
 
 Flags:
   -h, --help      help for docubook
   --version   Print the version information`,
-	Version:       Version, // This is all you need for version handling
+	// By setting the Version field, Cobra automatically adds the --version flag
+	// and handles its execution. No Run function or manual flag is needed.
+	Version:       Version,
 	SilenceUsage:  true,
 	SilenceErrors: true,
-	// No 'Run' function is needed. If no subcommand is given,
-	// Cobra will automatically show the help text.
 }
 
 func init() {
