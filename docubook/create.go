@@ -1,4 +1,4 @@
-// docubook/create.go
+// version 0.3.0
 package main
 
 import (

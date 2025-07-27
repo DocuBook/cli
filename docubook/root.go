@@ -1,4 +1,4 @@
-// docubook/root.go
+// version 0.3.0
 package main
 
 import (
@@ -10,7 +10,7 @@ import (
 
 const (
 	AppName        = "DocuBook CLI"
-	DefaultVersion = "0.2.0" // Atau versi default yang Anda inginkan
+	DefaultVersion = "0.3.0" // initial version
 )
 
 var (

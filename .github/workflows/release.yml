@@ -10,10 +10,9 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
 
-    # FIX: Tambahkan blok 'permissions' ini
-    # Ini memberikan izin kepada Actions untuk membuat rilis.
+    # This gives the Actions permission to create a release.
     permissions:
-      contents: write # Diperlukan untuk membuat rilis dan mengunggah aset
+      contents: write # Required to create a release and upload assets
 
     steps:
       - name: Checkout
