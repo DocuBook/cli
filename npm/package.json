@@ -1,0 +1,30 @@
+{
+  "name": "@docubook/create",
+  "version": "1.13.10",
+  "description": "CLI to create DocuBook projects",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "docubook": "./src/index.js"
+  },
+  "keywords": [
+    "docs",
+    "markdown",
+    "react-template",
+    "nextjs-template",
+    "documentation"
+  ],
+  "homepage": "https://docubook.pro/",
+  "repository": "github:DocuBook/docubook",
+  "author": "wildan.nrs",
+  "license": "MIT",
+  "dependencies": {
+    "boxen": "^8.0.1",
+    "chalk": "^5.3.0",
+    "cli-progress": "^3.12.0",
+    "commander": "^12.1.0",
+    "enquirer": "^2.4.1",
+    "figlet": "^1.8.0",
+    "ora": "^8.1.0"
+  }
+}
