@@ -27,7 +27,20 @@ var rootCmd = &cobra.Command{
 	Long: `DocuBook CLI helps you create and manage beautiful documentation sites.
 With DocuBook, you can quickly set up a documentation site with a modern look and feel.
 
-Find more information at https://docubook.pro`,
+Find more information at https://docubook.pro
+
+Usage:
+  docubook [command]
+
+Available Commands:
+  cli         to initialize the CLI equipment
+  create      Create a new DocuBook project
+
+Flags:
+  -h, --help      help for docubook
+  -v, --version   Print the version information
+
+Use "docubook [command] --help" for more information about a command.`,
 	Version:       Version,
 	SilenceUsage:  true,
 	SilenceErrors: true,
