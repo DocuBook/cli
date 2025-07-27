@@ -126,6 +126,30 @@ To update to the latest version:
 go install github.com/DocuBook/cli@latest
 ```
 
+### Uninstalling DocuBook CLI
+
+To uninstall DocuBook CLI globally, simply remove the binary from your system:
+
+1. Remove the binary:
+   ```bash
+   rm $(go env GOPATH)/bin/docubook
+   ```
+
+2. (Optional) If you added the export line to your shell configuration file, you can remove it:
+   - For Zsh (macOS):
+     ```bash
+     sed -i '' '/export PATH=\$PATH:$(go env GOPATH)\/bin/d' ~/.zshrc
+     ```
+   - For Bash:
+     ```bash
+     sed -i '' '/export PATH=\$PATH:$(go env GOPATH)\/bin/d' ~/.bash_profile
+     ```
+
+3. Verify the uninstallation:
+   ```bash
+   which docubook || echo "DocuBook CLI has been successfully uninstalled"
+   ```
+
 ### Still Having Issues?
 
 - Check your Go configuration:
@@ -134,11 +158,3 @@ go install github.com/DocuBook/cli@latest
   ```
 - Look for any error messages during installation
 - Verify you have write permissions to the Go bin directory
-
-## 🤝 Contributing
-
-We welcome contributions! Please open an issue or submit a pull request on [GitHub](https://github.com/DocuBook/cli).
-
-## 📜 License
-
-[MIT](LICENSE) © DocuBook
