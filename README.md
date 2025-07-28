@@ -3,7 +3,7 @@
 DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy documentation directly from your terminal.
 
 <div align="center">
-  <img src="https://media.giphy.com/media/JtjAa4u5GTHd1dph0G/giphy.gif" alt="DocuBook CLI" width="600" />
+  <img src="https://github.com/DocuBook/cli/blob/main/docubook-cli.gif" alt="DocuBook CLI" width="600" />
 </div>
 
 
