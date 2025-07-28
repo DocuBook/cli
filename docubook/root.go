@@ -1,4 +1,4 @@
-// version 0.3.2
+// version 0.3.3
 package main
 
 import (
@@ -10,7 +10,7 @@ import (
 
 const (
 	AppName        = "DocuBook CLI"
-	DefaultVersion = "0.3.2" // initial version
+	DefaultVersion = "0.3.3" // initial version
 )
 
 var (
@@ -20,13 +20,15 @@ var (
 var rootCmd = &cobra.Command{
 	Use:           "docubook",
 	Short:         "DocuBook CLI written on GO! Initialize, Update, Push and Deploy your Docs direct into Terminal.",
-	Version:       Version, // Cobra menangani flag --version secara otomatis
+	Version:       Version, // Cobra handles the --version flag automatically
 	SilenceUsage:  true,
 	SilenceErrors: true,
 }
 
 func init() {
-	rootCmd.SetVersionTemplate(fmt.Sprintf("%s\nVersion: {{.Version}}\n", AppName))
+	// FIX: Change the template to one line with a separator " - "
+	// The first newline character is removed and replaced with " - ".
+	rootCmd.SetVersionTemplate(fmt.Sprintf("%s - Version: {{.Version}}\n", AppName))
 }
 
 func Execute() {

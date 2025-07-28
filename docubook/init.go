@@ -1,4 +1,4 @@
-// version 0.3.2
+// version 0.3.3
 package main
 
 import (
@@ -13,39 +13,56 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Styles
+// --- Styles ---
 var (
-	// Definisikan gaya untuk berbagai elemen UI
+	// Define styles for various UI elements
 	appStyle = lipgloss.NewStyle().Margin(1, 2)
 
+	// Style for the large, centered welcome message
+	welcomeHeaderStyle = lipgloss.NewStyle().
+				Bold(true).
+				Foreground(lipgloss.Color("#FAFAFA")).
+				Background(lipgloss.Color("#865DFF")). // Solid purple background
+				Padding(1, 4).
+				MarginBottom(1)
+
+	// Style for the website link
+	websiteStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("39")). // Blue
+			MarginBottom(2)
+
+	// Style for the check header
 	headerStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("42")) // Hijau
+			Foreground(lipgloss.Color("42")) // Green
 
-	// Gaya untuk teks yang berhasil
-	successStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("42")) // Hijau
+	// Style for the checkmark
+	checkStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("42")) // Green
 
-	// Gaya untuk teks error atau tidak ditemukan
-	errorStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("197")) // Merah
+	// Style for the cross mark
+	crossStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("197")) // Red
 
-	// Gaya untuk teks status atau abu-abu
-	statusStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("240")) // Abu-abu
+	// Style for inactive/waiting items
+	inactiveStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("240")) // Gray
 
-	// Gaya untuk perintah yang disarankan
+	// Style for suggested commands
 	commandStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("86")). // Ungu
+			Foreground(lipgloss.Color("86")). // Purple
 			Bold(true)
 
-	// Gaya untuk link
+	// Style for installation links
 	linkStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("39")). // Biru
+			Foreground(lipgloss.Color("39")). // Blue
 			Underline(true)
+
+	// Base style for the help text
+	helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 )
 
-// initCmd mendefinisikan perintah 'init'
+// --- Cobra Command ---
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Checks for required tools to create a DocuBook project",
@@ -60,39 +77,50 @@ var initCmd = &cobra.Command{
 	},
 }
 
-// packageManager merepresentasikan satu tool yang akan kita cek
+// --- Bubble Tea Model & Logic ---
+
+// Define UI stages to control the flow
+type uiStage int
+
+const (
+	welcomeStage  uiStage = iota // Stage 0: Displaying the welcome message
+	checkingStage                // Stage 1: Displaying the check process
+)
+
+// packageManager represents a tool we'll check
 type packageManager struct {
-	name       string // Nama yang ditampilkan (e.g., "npm")
-	executable string // Nama command yang akan dicek (e.g., "npm")
-	installCmd string // Perintah instalasi yang disarankan
-	checking   bool   // True jika sedang dicek
-	installed  bool   // True jika ditemukan
-	checked    bool   // True jika sudah selesai dicek
+	name       string
+	executable string
+	installCmd string
+	installed  bool
 }
 
-// checkResultMsg adalah pesan yang dikirim setelah pengecekan selesai
+// startCheckingMsg is a message to transition from welcome to checking
+type startCheckingMsg struct{}
+
+// checkResultMsg is sent when a check is complete
 type checkResultMsg struct {
 	index     int
 	installed bool
 }
 
-// model adalah state dari aplikasi TUI kita
+// model is the state of our TUI application
 type model struct {
+	stage    uiStage // Current UI stage
 	spinner  spinner.Model
 	packages []packageManager
-	results  []string // Menyimpan perintah instalasi yang valid
-	index    int      // Index dari package yang sedang dicek
-	done     bool     // True jika semua pengecekan selesai
+	index    int
+	done     bool
 }
 
-// initialModel menyiapkan state awal
+// initialModel prepares the initial state
 func initialModel() model {
 	s := spinner.New()
-	// Mengubah gaya spinner agar mirip dengan contoh
 	s.Spinner = spinner.Line
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 
 	return model{
+		stage:   welcomeStage, // Start from the welcome stage
 		spinner: s,
 		packages: []packageManager{
 			{name: "npm", executable: "npm", installCmd: "npx @docubook/create@latest"},
@@ -100,126 +128,141 @@ func initialModel() model {
 			{name: "yarn", executable: "yarn", installCmd: "yarn dlx @docubook/create@latest"},
 			{name: "bun", executable: "bun", installCmd: "bunx @docubook/create@latest"},
 		},
-		// Mulai pengecekan dari index 0
 		index: 0,
 	}
 }
 
-// checkInstalled adalah tea.Cmd untuk mengecek keberadaan sebuah command
+// command to start checking after a delay
+func startChecking() tea.Cmd {
+	// Pause for 2.5 seconds before starting the check
+	return tea.Tick(2500*time.Millisecond, func(t time.Time) tea.Msg {
+		return startCheckingMsg{}
+	})
+}
+
+// command to check for a program's existence
 func checkInstalled(pm packageManager, index int) tea.Cmd {
 	return func() tea.Msg {
-		// Simulasi kerja agar spinner terlihat lebih lama
-		time.Sleep(400 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 		_, err := exec.LookPath(pm.executable)
 		return checkResultMsg{index: index, installed: err == nil}
 	}
 }
 
-// Init adalah command pertama yang dijalankan
+// Init is the first command to run
 func (m model) Init() tea.Cmd {
-	// Mulai spinner dan pengecekan pertama
-	return tea.Batch(
-		m.spinner.Tick,
-		checkInstalled(m.packages[0], 0),
-	)
+	// Start by showing the welcome screen, then send a message to start checking
+	return startChecking()
 }
 
-// Update menangani semua pesan dan memperbarui state
+// Update handles all messages and updates the state
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if msg.String() == "q" || msg.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
-		return m, nil
 
 	case spinner.TickMsg:
-		var cmd tea.Cmd
-		m.spinner, cmd = m.spinner.Update(msg)
-		return m, cmd
-
-	case checkResultMsg:
-		// Update status package yang baru selesai dicek
-		m.packages[msg.index].checking = false
-		m.packages[msg.index].checked = true
-		m.packages[msg.index].installed = msg.installed
-
-		// Jika terinstal, tambahkan perintahnya ke hasil
-		if msg.installed {
-			m.results = append(m.results, m.packages[msg.index].installCmd)
+		// Only update the spinner if in the checking stage
+		if m.stage == checkingStage {
+			var cmd tea.Cmd
+			m.spinner, cmd = m.spinner.Update(msg)
+			return m, cmd
 		}
 
-		// Pindah ke package selanjutnya
+	case startCheckingMsg:
+		// Switch to the checking stage and start the spinner & first check
+		m.stage = checkingStage
+		return m, tea.Batch(
+			m.spinner.Tick,
+			checkInstalled(m.packages[0], 0),
+		)
+
+	case checkResultMsg:
+		// Update the status of the package that was just checked
+		m.packages[msg.index].installed = msg.installed
+
+		// Move to the next package
 		m.index++
 		if m.index >= len(m.packages) {
-			// Semua sudah dicek, selesai.
+			// All checks are done
 			m.done = true
 			return m, tea.Quit
 		}
 
-		// Mulai pengecekan package selanjutnya
-		m.packages[m.index].checking = true
+		// Start checking the next package
 		return m, checkInstalled(m.packages[m.index], m.index)
-
-	default:
-		return m, nil
 	}
+
+	return m, nil
 }
 
-// View merender UI berdasarkan state saat ini
+// View renders the UI based on the current state
 func (m model) View() string {
-	var b strings.Builder
+	// If in the welcome stage
+	if m.stage == welcomeStage {
+		welcomeText := welcomeHeaderStyle.Render("DocuBook CLI")
+		websiteText := websiteStyle.Render("Find more information and guides at https://docubook.pro")
+		statusText := inactiveStyle.Render("Starting environment check...")
 
-	// Header
-	b.WriteString(headerStyle.Render("✨ DocuBook Environment Check"))
-	b.WriteString("\n\n")
-
-	// Tampilan saat pengecekan berlangsung
-	if !m.done {
-		b.WriteString("Checking for required tools...\n\n")
-		for i, pkg := range m.packages {
-			if i < m.index {
-				// Item yang sudah selesai dicek
-				if pkg.installed {
-					b.WriteString(fmt.Sprintf("  %s Found %s\n", successStyle.Render("✓"), pkg.name))
-				} else {
-					b.WriteString(fmt.Sprintf("  %s %s not found\n", errorStyle.Render("✗"), pkg.name))
-				}
-			} else if i == m.index {
-				// Item yang sedang dicek
-				b.WriteString(fmt.Sprintf("  %s Checking for %s...\n", m.spinner.View(), pkg.name))
-			} else {
-				// Item yang belum dicek
-				b.WriteString(fmt.Sprintf("  %s %s\n", statusStyle.Render("?"), pkg.name))
-			}
-		}
+		return appStyle.Render(welcomeText + "\n" + websiteText + "\n" + statusText)
 	}
 
-	// Tampilan akhir setelah semua selesai dicek
-	if m.done {
-		// Jika ada tool yang ditemukan
-		if len(m.results) > 0 {
-			b.WriteString(successStyle.Render("✅ Good to go!"))
-			b.WriteString("\n\nYou can now create a new project with one of these commands:\n\n")
-			for _, cmd := range m.results {
+	// View for the checking and done stages
+	var b strings.Builder
+
+	if !m.done {
+		b.WriteString(headerStyle.Render("Checking for required tools...") + "\n\n")
+		// Render progress list while checking
+		for i := 0; i < len(m.packages); i++ {
+			if i == m.index {
+				b.WriteString(fmt.Sprintf("  %s Checking for: %s...\n", m.spinner.View(), m.packages[i].name))
+			} else if i < m.index {
+				if m.packages[i].installed {
+					b.WriteString(fmt.Sprintf("  %s Found: %s\n", checkStyle.Render("✓"), m.packages[i].name))
+				} else {
+					b.WriteString(fmt.Sprintf("  %s Not found: %s\n", crossStyle.Render("✗"), m.packages[i].name))
+				}
+			} else {
+				b.WriteString(fmt.Sprintf("  %s Waiting for: %s\n", inactiveStyle.Render("?"), m.packages[i].name))
+			}
+		}
+	} else {
+		// Render final results when done
+		b.WriteString(headerStyle.Render("Check complete. Results:") + "\n\n")
+
+		// Render the final list of results
+		var availableCmds []string
+		for _, pkg := range m.packages {
+			if pkg.installed {
+				b.WriteString(fmt.Sprintf("  %s Found %s\n", checkStyle.Render("✓"), pkg.name))
+				availableCmds = append(availableCmds, pkg.installCmd)
+			} else {
+				b.WriteString(fmt.Sprintf("  %s Not Found %s\n", crossStyle.Render("✗"), pkg.name))
+			}
+		}
+		b.WriteString("\n")
+
+		if len(availableCmds) > 0 {
+			b.WriteString(checkStyle.Render("✅ Ready to go!"))
+			b.WriteString("\n\nYou can create a new project with one of these commands:\n\n")
+			for _, cmd := range availableCmds {
 				b.WriteString(fmt.Sprintf("  %s\n", commandStyle.Render(cmd)))
 			}
 		} else {
-			// Jika tidak ada tool yang ditemukan
-			b.WriteString(errorStyle.Render("❌ No required tools found."))
+			b.WriteString(crossStyle.Render("❌ Required tools not found."))
 			b.WriteString("\n\nPlease install Node.js or Bun to continue:\n\n")
 			b.WriteString(fmt.Sprintf("  - Node.js (includes npm): %s\n", linkStyle.Render("https://nodejs.org/")))
 			b.WriteString(fmt.Sprintf("  - Bun: %s\n", linkStyle.Render("https://bun.sh/")))
 		}
 	}
 
-	b.WriteString(statusStyle.Render("\nPress 'q' to quit."))
-
+	b.WriteString(helpStyle.Render("\nPress 'q' to quit."))
 	return appStyle.Render(b.String())
 }
 
-// init() function dieksekusi saat package di-load
+// init() function is executed when the package is loaded
 func init() {
-	// Tambahkan initCmd ke rootCmd
 	rootCmd.AddCommand(initCmd)
 }
