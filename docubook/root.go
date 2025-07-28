@@ -1,4 +1,4 @@
-// version 0.3.1
+// version 0.3.2
 package main
 
 import (
@@ -10,7 +10,7 @@ import (
 
 const (
 	AppName        = "DocuBook CLI"
-	DefaultVersion = "0.3.1" // initial version
+	DefaultVersion = "0.3.2" // initial version
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:           "docubook",
-	Short:         "DocuBook CLI helps you create and manage beautiful documentation sites.",
+	Short:         "DocuBook CLI written on GO! Initialize, Update, Push and Deploy your Docs direct into Terminal.",
 	Version:       Version, // Cobra menangani flag --version secara otomatis
 	SilenceUsage:  true,
 	SilenceErrors: true,

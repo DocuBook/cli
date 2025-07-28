@@ -3,7 +3,7 @@
 DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy documentation directly from your terminal.
 
 <div align="center">
-  <img src="https://media.giphy.com/media/JtjAa4u5GTHd1dph0G/giphy.gif" alt="Coding Panda" width="600" />
+  <img src="https://media.giphy.com/media/JtjAa4u5GTHd1dph0G/giphy.gif" alt="DocuBook CLI" width="600" />
 </div>
 
 
@@ -103,19 +103,8 @@ You should see a version message.
 1. Open a terminal and navigate to your project directory
 2. To start a new project, run:
    ```bash
-   docubook cli
+   docubook init
    ```
-3. Follow the on-screen instructions to complete project configuration
-
-Complete example:
-```bash
-# Create a new project directory
-mkdir my-documentation
-cd my-documentation
-
-# Initialize DocuBook project
-docubook cli
-```
 
 ## 🔧 Troubleshooting
 
