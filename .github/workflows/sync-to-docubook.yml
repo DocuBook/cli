@@ -1,5 +1,5 @@
 # The name of the workflow as it will appear in the Actions tab
-name: Sync Dist to DocuBook Repo
+name: Sync Dist to DocuBook Repo (with Debug)
 
 # Workflow trigger
 on:
@@ -26,6 +26,22 @@ jobs:
       - name: Sync files to destination
         run: |
           rsync -av --delete npm/src/dist/ dev/
+      
+      # =================================================================
+      # NEW DEBUG STEP
+      # =================================================================
+      - name: Debug Token and Permissions
+        env:
+          GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
+        run: |
+          echo "==================== DEBUG INFO ===================="
+          echo "### Checking authentication status with PAT... ###"
+          gh auth status -h github.com
+          
+          echo ""
+          echo "### Checking PAT's permissions on DocuBook/docubook... ###"
+          gh api /repos/DocuBook/docubook --jq .permissions
+          echo "===================================================="
 
       # Step 4: Create Pull Request
       - name: Create Pull Request
