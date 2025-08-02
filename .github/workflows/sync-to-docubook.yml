@@ -1,5 +1,5 @@
 # The name of the workflow as it will appear in the Actions tab
-name: Sync Dist to DocuBook Repo
+name: Sync Dist and Create PR (via SSH)
 
 # Workflow trigger
 on:
@@ -13,59 +13,68 @@ jobs:
   sync-and-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source repository
+      # Step 1: Perform a full clone, not a shallow one
+      - name: Checkout Source Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 0 means download all history
+          fetch-depth: 0 # 0 means fetch all history
 
-      # Set up SSH Agent with Private Key
+      # Step 2: Setup the SSH Agent with the Private Key
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.DOCUBOOK_SSH_PRIVATE_KEY }}
 
-      # Clone the destination repository using SSH
-      - name: Clone destination repository
+      # Step 3: Clone the destination repository using SSH
+      - name: Clone Destination Repository
         run: |
           git clone git@github.com:DocuBook/docubook.git dev
 
-      - name: Sync files to destination
+      # Step 4: Sync the files to the destination
+      - name: Sync Files to Destination
         run: |
           rsync -av --delete npm/src/dist/ dev/
 
+      # Step 5: Commit, Push, and Create Pull Request
       - name: Create Pull Request
-        # Note: 'gh pr create' still needs PAT for API authentication
+        # Note: 'gh pr create' still needs a PAT for API authentication
         env:
-          GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
+          GH_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
           cd dev
           
-          # Configure user commit
+          # Configure the git user for the commit
           git config user.name "Bot DocuBook"
           git config user.email "wildan@docubook.pro"
           
+          # Check if there are any changes, if not, stop the process
           if [[ -z $(git status --porcelain) ]]; then
             echo "No changes to commit."
             exit 0
           fi
           
-          SOURCE_COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c 1-7)
-          NEW_BRANCH="dev-${SOURCE_COMMIT_SHA}"
-          git checkout -b ${NEW_BRANCH}
+          # =================================================================
+          # REFACTORED LOGIC STARTS HERE
+          # =================================================================
           
+          # 1. Create a new local branch named 'dev'
+          git checkout -b dev
+          
+          # Add and commit the changes to the local 'dev' branch
           git add .
-          git commit -m "feat(sync): Sync dist from cli@${SOURCE_COMMIT_SHA}"
+          git commit -m "feat(sync): Sync dist from cli@${{ github.sha }}"
 
-          # =================================================================
-          # CHANGES HERE
-          # =================================================================
-          # Push explicitly to the SSH destination repository URL
-          git push git@github.com:DocuBook/docubook.git ${NEW_BRANCH}
+          # 2. Define a unique name for the remote branch
+          SOURCE_COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c 1-7)
+          REMOTE_BRANCH="dev-${SOURCE_COMMIT_SHA}"
           
-          # Create Pull Request using GitHub CLI
-          # This uses GITHUB_TOKEN (PAT) for API interaction
+          # 3. Push the local 'dev' branch to the unique remote branch
+          # Syntax: git push <remote_url> <local_branch>:<remote_branch>
+          git push git@github.com:DocuBook/docubook.git dev:${REMOTE_BRANCH}
+          
+          # 4. Create a Pull Request from the unique remote branch
           gh pr create \
             --title "Sync: Update Dist from DocuBook/cli" \
-            --body "Automated PR to sync changes from \`DocuBook/cli@${SOURCE_COMMIT_SHA}\`. Please review the changes." \
+            --body "Automated PR to sync changes from \`DocuBook/cli@${{ github.sha }}\`. Please review the changes." \
             --base main \
-            --head ${NEW_BRANCH}
+            --head ${REMOTE_BRANCH}
