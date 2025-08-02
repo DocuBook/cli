@@ -1,75 +1,60 @@
 # The name of the workflow as it will appear in the Actions tab
-name: Sync Dist to DocuBook Repo (with Debug)
+name: Sync Dist to DocuBook Repo
 
 # Workflow trigger
 on:
   push:
     branches:
-      - main # Only runs when there is a push to the main branch
+      - main
     paths:
-      - 'npm/src/dist/**' # Only runs when there is a change in the dist directory
+      - 'npm/src/dist/**'
 
 jobs:
   sync-and-pr:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the source repository (DocuBook/cli)
       - name: Checkout source repository
         uses: actions/checkout@v4
 
-      # Step 2: Clone the destination repository (DocuBook/docubook) using PAT
       - name: Clone destination repository
         run: |
-          git clone https://x-access-token:${{ secrets.DOCUBOOK_PAT }}@github.com/DocuBook/docubook.git dev
+          git clone https://github.com/DocuBook/docubook.git dev
 
-      # Step 3: Sync files from dist
       - name: Sync files to destination
         run: |
           rsync -av --delete npm/src/dist/ dev/
-      
-      # =================================================================
-      # NEW DEBUG STEP
-      # =================================================================
-      - name: Debug Token and Permissions
-        env:
-          GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
-        run: |
-          echo "==================== DEBUG INFO ===================="
-          echo "### Checking authentication status with PAT... ###"
-          gh auth status -h github.com
-          
-          echo ""
-          echo "### Checking PAT's permissions on DocuBook/docubook... ###"
-          gh api /repos/DocuBook/docubook --jq .permissions
-          echo "===================================================="
 
-      # Step 4: Create Pull Request
       - name: Create Pull Request
         env:
-          # Use PAT for GitHub CLI authentication
           GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
           cd dev
           
-          # Configure git user
           git config user.name "Bot DocuBook"
           git config user.email "wildan@docubook.pro"
           
-          # Check if there are any changes, if not, stop the process
           if [[ -z $(git status --porcelain) ]]; then
             echo "No changes to commit."
             exit 0
           fi
           
-          # Create a new branch based on the SHA commit
           SOURCE_COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c 1-7)
           NEW_BRANCH="dev-${SOURCE_COMMIT_SHA}"
           git checkout -b ${NEW_BRANCH}
           
-          # Add, commit, and push to the new branch
           git add .
           git commit -m "feat(sync): Sync dist from cli@${SOURCE_COMMIT_SHA}"
-          git push https://x-access-token:${{ secrets.DOCUBOOK_PAT }}@github.com/DocuBook/docubook.git ${NEW_BRANCH}
+
+          # =================================================================
+          # NEW AUTHENTICATION METHOD
+          # =================================================================
+          # Override any default credential manager from the runner
+          git config --unset-all credential.helper
+          # Set our own credential helper that directly provides the PAT
+          git config credential.helper '!f() { echo "username=x-access-token"; echo "password=${{ secrets.DOCUBOOK_PAT }}"; }; f'
+
+          # Now push to the clean repository URL
+          git push https://github.com/DocuBook/docubook.git ${NEW_BRANCH}
           
           # Create Pull Request using GitHub CLI
           gh pr create \
