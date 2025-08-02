@@ -16,20 +16,29 @@ jobs:
       - name: Checkout source repository
         uses: actions/checkout@v4
 
+      # Set up SSH Agent with Private Key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DOCUBOOK_SSH_PRIVATE_KEY }}
+
+      # Clone destination repository using SSH
       - name: Clone destination repository
         run: |
-          git clone https://github.com/DocuBook/docubook.git dev
+          git clone git@github.com:DocuBook/docubook.git dev
 
       - name: Sync files to destination
         run: |
           rsync -av --delete npm/src/dist/ dev/
 
       - name: Create Pull Request
+        # Note: 'gh pr create' still needs PAT for API authentication
         env:
           GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
           cd dev
           
+          # Configure user commit, NOT authentication
           git config user.name "Bot DocuBook"
           git config user.email "wildan@docubook.pro"
           
@@ -45,18 +54,11 @@ jobs:
           git add .
           git commit -m "feat(sync): Sync dist from cli@${SOURCE_COMMIT_SHA}"
 
-          # =================================================================
-          # NEW AUTHENTICATION METHOD
-          # =================================================================
-          # Override any default credential manager from the runner
-          git config --unset-all credential.helper
-          # Set our own credential helper that directly provides the PAT
-          git config credential.helper '!f() { echo "username=x-access-token"; echo "password=${{ secrets.DOCUBOOK_PAT }}"; }; f'
-
-          # Now push to the clean repository URL
-          git push https://github.com/DocuBook/docubook.git ${NEW_BRANCH}
+          # Push using SSH (automatically via ssh-agent)
+          git push origin ${NEW_BRANCH}
           
           # Create Pull Request using GitHub CLI
+          # This uses GITHUB_TOKEN (PAT) for API interaction
           gh pr create \
             --title "Sync: Update Dist from DocuBook/cli" \
             --body "Automated PR to sync changes from \`DocuBook/cli@${SOURCE_COMMIT_SHA}\`. Please review the changes." \
