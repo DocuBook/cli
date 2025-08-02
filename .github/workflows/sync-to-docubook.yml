@@ -37,42 +37,34 @@ jobs:
 
       # Step 5: Commit, Push, and Create Pull Request
       - name: Create Pull Request
-        # Note: 'gh pr create' still needs a PAT for API authentication
         env:
           GH_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
           cd dev
           
-          # Configure the git user for the commit
           git config user.name "Bot DocuBook"
           git config user.email "wildan@docubook.pro"
           
-          # Check if there are any changes, if not, stop the process
           if [[ -z $(git status --porcelain) ]]; then
             echo "No changes to commit."
             exit 0
           fi
           
-          # =================================================================
-          # REFACTORED LOGIC STARTS HERE
-          # =================================================================
-          
-          # 1. Create a new local branch named 'dev'
           git checkout -b dev
           
-          # Add and commit the changes to the local 'dev' branch
           git add .
           git commit -m "feat(sync): Sync dist from cli@${{ github.sha }}"
 
-          # 2. Define a unique name for the remote branch
-          SOURCE_COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c 1-7)
-          REMOTE_BRANCH="dev-${SOURCE_COMMIT_SHA}"
+          REMOTE_BRANCH="dev-sync-$(echo "${{ github.sha }}" | cut -c 1-7)"
           
-          # 3. Push the local 'dev' branch to the unique remote branch
-          # Syntax: git push <remote_url> <local_branch>:<remote_branch>
           git push git@github.com:DocuBook/docubook.git dev:${REMOTE_BRANCH}
+
+          # =================================================================
+          # PERUBAHAN DI SINI: Tambahkan jeda 5 detik
+          # =================================================================
+          echo "Waiting for 5 seconds for branch to propagate..."
+          sleep 5
           
-          # 4. Create a Pull Request from the unique remote branch
           gh pr create \
             --title "Sync: Update Dist from DocuBook/cli" \
             --body "Automated PR to sync changes from \`DocuBook/cli@${{ github.sha }}\`. Please review the changes." \
