@@ -20,13 +20,13 @@ jobs:
       # Langkah 2: Clone repo tujuan (DocuBook/docubook) menggunakan PAT
       - name: Clone destination repository
         run: |
-          git clone https://x-access-token:${{ secrets.DOCUBOOK_PAT }}@github.com/DocuBook/docubook.git
+          git clone https://x-access-token:${{ secrets.DOCUBOOK_PAT }}@github.com/DocuBook/docubook.git dev
 
       # Langkah 3: Sinkronisasi file dari direktori dist
       # Ganti `docubook/path/to/destination` dengan path tujuan di repo docubook
       - name: Sync files to destination
         run: |
-          rsync -av --delete npm/src/dist/ docubook/
+          rsync -av --delete npm/src/dist/ dev/
 
       # Langkah 4: Buat commit, push, dan create Pull Request
       - name: Create Pull Request
@@ -34,7 +34,7 @@ jobs:
           # Gunakan PAT untuk otentikasi GitHub CLI
           GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
-          cd docubook
+          cd dev
           
           # Konfigurasi git user
           git config user.name "Bot DocuBook"
