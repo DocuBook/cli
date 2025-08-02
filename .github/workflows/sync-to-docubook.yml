@@ -1,5 +1,5 @@
 # The name of the workflow as it will appear in the Actions tab
-name: Sync Dist and Create PR (via SSH)
+name: Sync NPM Package Version
 
 # Workflow trigger
 on:
@@ -68,7 +68,7 @@ jobs:
           git commit -m "feat(sync): Sync dist from cli@${{ github.sha }}"
 
           # Define a unique name for the remote branch
-          REMOTE_BRANCH="dev-sync-$(echo "${{ github.sha }}" | cut -c 1-7)"
+          REMOTE_BRANCH="dev-$(echo "${{ github.sha }}" | cut -c 1-7)"
           
           # Push the local 'dev' branch to the unique remote branch
           git push git@github.com:DocuBook/docubook.git dev:${REMOTE_BRANCH}
