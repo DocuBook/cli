@@ -13,7 +13,7 @@ jobs:
   sync-and-pr:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Perform a full clone, not a shallow one
+      # Step 1: Perform a full clone of the source repository
       - name: Checkout Source Repository
         uses: actions/checkout@v4
         with:
@@ -25,46 +25,59 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.DOCUBOOK_SSH_PRIVATE_KEY }}
 
-      # Step 3: Clone the destination repository using SSH
+      # Step 3: Clone the destination repository
       - name: Clone Destination Repository
         run: |
           git clone git@github.com:DocuBook/docubook.git dev
 
-      # Step 4: Sync the files to the destination
-      - name: Sync Files to Destination
-        run: |
-          rsync -av --delete npm/src/dist/ dev/
-
-      # Step 5: Commit, Push, and Create Pull Request
+      # Step 4: Sync, Commit, Push, and Create Pull Request
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
           cd dev
           
+          # Configure the git user for the commit
           git config user.name "Bot DocuBook"
           git config user.email "wildan@docubook.pro"
+
+          # Create a new local branch named 'dev' from the default branch
+          git checkout -b dev
+
+          # =================================================================
+          # REFACTORED FILE HANDLING STARTS HERE
+          # =================================================================
+
+          # 1. Safely remove all old files from the working directory
+          # This does not touch the .git directory
+          git rm -rf .
+
+          # 2. Copy the new content from the source's dist folder
+          cp -r ../npm/src/dist/. .
           
+          # =================================================================
+          
+          # Check if there are any actual changes to commit
           if [[ -z $(git status --porcelain) ]]; then
             echo "No changes to commit."
             exit 0
           fi
           
-          git checkout -b dev
-          
+          # Add and commit the new content
           git add .
           git commit -m "feat(sync): Sync dist from cli@${{ github.sha }}"
 
-          REMOTE_BRANCH="dev-$(echo "${{ github.sha }}" | cut -c 1-7)"
+          # Define a unique name for the remote branch
+          REMOTE_BRANCH="dev-sync-$(echo "${{ github.sha }}" | cut -c 1-7)"
           
+          # Push the local 'dev' branch to the unique remote branch
           git push git@github.com:DocuBook/docubook.git dev:${REMOTE_BRANCH}
-
-          # =================================================================
-          # CHANGE HERE: Add a 5 second delay
-          # =================================================================
+          
+          # Wait a few seconds for GitHub's API to see the new branch
           echo "Waiting for 5 seconds for branch to propagate..."
           sleep 5
           
+          # Create a Pull Request from the unique remote branch
           gh pr create \
             --title "Sync: Update Dist from DocuBook/cli" \
             --body "Automated PR to sync changes from \`DocuBook/cli@${{ github.sha }}\`. Please review the changes." \
