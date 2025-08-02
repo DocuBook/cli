@@ -4,9 +4,6 @@ jspm_packages/
 bun.lock
 
 # Build outputs
-dist/
-build/
-out/
 .next/
 .nuxt/
 .cache/
