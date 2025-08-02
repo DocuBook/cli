@@ -1,6 +1,6 @@
 {
   "name": "@docubook/create",
-  "version": "1.13.10",
+  "version": "1.14.0",
   "description": "CLI to create DocuBook projects",
   "main": "src/index.js",
   "type": "module",
