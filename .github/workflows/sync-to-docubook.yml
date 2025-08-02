@@ -1,62 +1,61 @@
-# Nama workflow yang akan tampil di tab Actions
+# The name of the workflow as it will appear in the Actions tab
 name: Sync Dist to DocuBook Repo
 
-# Pemicu (trigger) workflow
+# Workflow trigger
 on:
   push:
     branches:
-      - main # Hanya berjalan saat ada push ke branch main
+      - main # Only runs when there is a push to the main branch
     paths:
-      - 'npm/src/dist/**' # Hanya berjalan jika ada perubahan di dalam direktori ini
+      - 'npm/src/dist/**' # Only runs when there is a change in the dist directory
 
 jobs:
   sync-and-pr:
     runs-on: ubuntu-latest
     steps:
-      # Langkah 1: Checkout kode dari repo sumber (DocuBook/cli)
+      # Step 1: Checkout the source repository (DocuBook/cli)
       - name: Checkout source repository
         uses: actions/checkout@v4
 
-      # Langkah 2: Clone repo tujuan (DocuBook/docubook) menggunakan PAT
+      # Step 2: Clone the destination repository (DocuBook/docubook) using PAT
       - name: Clone destination repository
         run: |
           git clone https://x-access-token:${{ secrets.DOCUBOOK_PAT }}@github.com/DocuBook/docubook.git dev
 
-      # Langkah 3: Sinkronisasi file dari direktori dist
-      # Ganti `docubook/path/to/destination` dengan path tujuan di repo docubook
+      # Step 3: Sync files from dist
       - name: Sync files to destination
         run: |
           rsync -av --delete npm/src/dist/ dev/
 
-      # Langkah 4: Buat commit, push, dan create Pull Request
+      # Step 4: Create Pull Request
       - name: Create Pull Request
         env:
-          # Gunakan PAT untuk otentikasi GitHub CLI
+          # Use PAT for GitHub CLI authentication
           GITHUB_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
         run: |
           cd dev
           
-          # Konfigurasi git user
+          # Configure git user
           git config user.name "Bot DocuBook"
           git config user.email "wildan@docubook.pro"
           
-          # Cek apakah ada perubahan, jika tidak, hentikan proses
+          # Check if there are any changes, if not, stop the process
           if [[ -z $(git status --porcelain) ]]; then
             echo "No changes to commit."
             exit 0
           fi
           
-          # Buat branch baru yang unik berdasarkan SHA commit
+          # Create a new branch based on the SHA commit
           SOURCE_COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c 1-7)
           NEW_BRANCH="dev-${SOURCE_COMMIT_SHA}"
           git checkout -b ${NEW_BRANCH}
           
-          # Add, commit, dan push ke branch baru
+          # Add, commit, and push to the new branch
           git add .
           git commit -m "feat(sync): Sync dist from cli@${SOURCE_COMMIT_SHA}"
           git push origin ${NEW_BRANCH}
           
-          # Buat Pull Request menggunakan GitHub CLI
+          # Create Pull Request using GitHub CLI
           gh pr create \
             --title "Sync: Update Dist from DocuBook/cli" \
             --body "Automated PR to sync changes from \`DocuBook/cli@${SOURCE_COMMIT_SHA}\`. Please review the changes." \
