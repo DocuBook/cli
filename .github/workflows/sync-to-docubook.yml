@@ -55,12 +55,12 @@ jobs:
           git add .
           git commit -m "feat(sync): Sync dist from cli@${{ github.sha }}"
 
-          REMOTE_BRANCH="dev-sync-$(echo "${{ github.sha }}" | cut -c 1-7)"
+          REMOTE_BRANCH="dev-$(echo "${{ github.sha }}" | cut -c 1-7)"
           
           git push git@github.com:DocuBook/docubook.git dev:${REMOTE_BRANCH}
 
           # =================================================================
-          # PERUBAHAN DI SINI: Tambahkan jeda 5 detik
+          # CHANGE HERE: Add a 5 second delay
           # =================================================================
           echo "Waiting for 5 seconds for branch to propagate..."
           sleep 5
