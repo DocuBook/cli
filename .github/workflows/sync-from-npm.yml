@@ -10,7 +10,7 @@ on:
       - 'npm/src/dist/**'
 
 jobs:
-  sync-and-pr:
+  sync-from-npm:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Perform a full clone of the source repository
