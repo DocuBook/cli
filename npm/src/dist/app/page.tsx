@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import { getMetadata } from "@/app/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
+// v1.14.0
 export const metadata = getMetadata({
   title: "Home",
 });
