@@ -1,73 +1,67 @@
-import enquirer from "enquirer";
+import prompts from "prompts";
 import { detectDefaultPackageManager, getPackageManagerVersion } from "../utils/packageManager.js";
 import log from "../utils/logger.js";
-
-const { prompt } = enquirer;
-
-/**
- * Detects if the command was run with yarn or yarn dlx
- * @returns {boolean}
- */
-function isYarnCommand() {
-  const userAgent = process.env.npm_config_user_agent || '';
-  return userAgent.includes('yarn') || process.argv.some(arg => arg.includes('yarn'));
-}
+import chalk from "chalk";
 
 /**
  * Collects user input for project creation
+ * @param {string} [cliProvidedDir] - The directory name provided via CLI argument.
  * @returns {Promise<Object>} User answers
  */
-export async function collectUserInput() {
-  // Skip installation prompt if running with yarn/yarn dlx
-  const isYarn = isYarnCommand();
+export async function collectUserInput(cliProvidedDir) {
   const defaultPackageManager = detectDefaultPackageManager();
+  let answers = {
+    directoryName: cliProvidedDir
+  };
 
-  // Get initial answers (directory name and package manager)
-  const { directoryName, packageManager } = await prompt([
+  const questions = [
     {
-      type: "input",
+      // Skip this question if directory name is provided
+      type: cliProvidedDir ? null : "text",
       name: "directoryName",
-      message: "📁 Project name",
+      message: "What is your project named?",
       initial: "docubook",
+      validate: (name) => name.trim().length > 0 ? true : "Project name cannot be empty.",
     },
     {
       type: "select",
       name: "packageManager",
-      message: "📦 Package manager",
-      choices: ["npm", "pnpm", "yarn", "bun"],
-      initial: defaultPackageManager,
-    }
-  ]);
-
-  // Only ask about installation if not using yarn
-  let installNow = false;
-  if (packageManager !== 'yarn') {
-    const { shouldInstall } = await prompt({
-      type: "confirm",
-      name: "shouldInstall",
-      message: "Install dependencies now?",
+      message: "Select your package manager:",
+      choices: [
+        { title: "npm", value: "npm" },
+        { title: "pnpm", value: "pnpm" },
+        { title: "yarn", value: "yarn" },
+        { title: "bun", value: "bun" },
+      ],
+      initial: ["npm", "pnpm", "yarn", "bun"].indexOf(defaultPackageManager),
+    },
+    {
+      type: (prev) => (prev !== 'yarn' ? "confirm" : null),
+      name: "installNow",
+      message: "Would you like to install dependencies now?",
       initial: true,
-    });
-    installNow = shouldInstall;
-  }
+    },
+  ];
 
-  // Prepare the answers object
-  const answers = {
-    directoryName,
-    packageManager,
-    installNow
-  };
+  const promptAnswers = await prompts(questions, {
+    onCancel: () => {
+      log.error("Scaffolding cancelled.");
+      process.exit(0);
+    },
+  });
 
-  // Validate package manager is installed
-  const version = getPackageManagerVersion(packageManager);
+  // Combine answers from CLI and from prompt
+  answers = { ...answers, ...promptAnswers };
 
+  // Validate the selected package manager
+  const version = getPackageManagerVersion(answers.packageManager);
   if (!version) {
-    log.error(`${packageManager} is not installed on your system.`);
-    process.exit(1);
+    throw new Error(`${chalk.bold(answers.packageManager)} is not installed on your system. Please install it to continue.`);
   }
 
   return {
     ...answers,
-    version
+    directoryName: answers.directoryName.trim(),
+    version,
   };
 }
