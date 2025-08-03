@@ -81,7 +81,7 @@ jobs:
           
           # Add and commit the new content
           git add .
-          git commit -m "chore(sync): Sync package version v${{ steps.get_version.outputs.version }}"
+          git commit -m "chore: Sync package version v${{ steps.get_version.outputs.version }}"
 
           # Define a unique name for the remote branch
           REMOTE_BRANCH="dev-$(echo "${{ github.sha }}" | cut -c 1-7)"
@@ -95,7 +95,7 @@ jobs:
           
           # Create a Pull Request from the unique remote branch
           gh pr create \
-            --title "chore(sync): Sync package version v${{ steps.get_version.outputs.version }}" \
+            --title "chore: Sync package version v${{ steps.get_version.outputs.version }}" \
             --body "$PR_BODY" \
             --base main \
             --head ${REMOTE_BRANCH}
