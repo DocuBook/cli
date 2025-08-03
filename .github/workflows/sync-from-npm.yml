@@ -39,6 +39,17 @@ jobs:
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
+          PR_BODY: |
+            This is an automated pull request to sync the built distributable files from the `DocuBook/cli` repository.
+
+            ### 📦 New Version
+            `v${{ steps.get_version.outputs.version }}`
+
+            ### 🔗 Source Commit
+            The changes originated from this commit in the source repository:
+            [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+
+            Please review the file changes and merge if everything looks correct.
         run: |
           cd dev
           
@@ -85,16 +96,6 @@ jobs:
           # Create a Pull Request from the unique remote branch
           gh pr create \
             --title "chore(sync): Sync package version v${{ steps.get_version.outputs.version }}" \
-            --body |
-              This is an automated pull request to sync the built distributable files from the \`DocuBook/cli\` repository.
-              
-              ### 📦 New Version
-              \`v${{ steps.get_version.outputs.version }}\`
-              
-              ### 🔗 Source Commit
-              The changes originated from this commit in the source repository:
-              [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-              
-              Please review the file changes and merge if everything looks correct.
+            --body "$PR_BODY" \
             --base main \
             --head ${REMOTE_BRANCH}
