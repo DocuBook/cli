@@ -30,7 +30,12 @@ jobs:
         run: |
           git clone git@github.com:DocuBook/docubook.git dev
 
-      # Step 4: Sync, Commit, Push, and Create Pull Request
+      # Step 4: Initialize package version
+      - name: Get Package Version
+        id: get_version
+        run: echo "version=$(jq -r .version npm/package.json)" >> $GITHUB_OUTPUT
+
+      # Step 5: Sync, Commit, Push, and Create Pull Request
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.DOCUBOOK_PAT }}
@@ -65,7 +70,7 @@ jobs:
           
           # Add and commit the new content
           git add .
-          git commit -m "feat(sync): Sync dist from cli@${{ github.sha }}"
+          git commit -m "chore(sync): Sync package version v${{ steps.get_version.outputs.version }}"
 
           # Define a unique name for the remote branch
           REMOTE_BRANCH="dev-$(echo "${{ github.sha }}" | cut -c 1-7)"
@@ -79,7 +84,17 @@ jobs:
           
           # Create a Pull Request from the unique remote branch
           gh pr create \
-            --title "Sync: Update Dist from DocuBook/cli" \
-            --body "Automated PR to sync changes from \`DocuBook/cli@${{ github.sha }}\`. Please review the changes." \
+            --title "chore(sync): Sync package version v${{ steps.get_version.outputs.version }}" \
+            --body |
+              This is an automated pull request to sync the built distributable files from the \`DocuBook/cli\` repository.
+              
+              ### 📦 New Version
+              \`v${{ steps.get_version.outputs.version }}\`
+              
+              ### 🔗 Source Commit
+              The changes originated from this commit in the source repository:
+              [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+              
+              Please review the file changes and merge if everything looks correct.
             --base main \
             --head ${REMOTE_BRANCH}
