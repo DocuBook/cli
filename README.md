@@ -25,12 +25,12 @@ DocuBook CLI is a Go-based tool that helps you initialize, update, and deploy do
 
 ## 💻 System Requirements
 
-You can use DocuBook CLI with either Go, Node.js, or Bun:
+You can use DocuBook CLI with either Go + Node.js or Bun:
 
 - **Golang** version 1.24 or newer ([Download Go](https://go.dev))
 - **Runtime Javascript**
   - Node.js (v18 or newer) ([Download Node.js](https://nodejs.org))
-  - or [Bun](https://bun.sh) (v1.0 or newer)
+  - Bun (v1.0 or newer) ([Download Bun](https://bun.sh))
 - **Git** (for version control) ([Download Git](https://git-scm.com))
 - Internet connection (for downloading dependencies)
 
