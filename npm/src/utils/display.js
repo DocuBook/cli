@@ -16,7 +16,7 @@ export function displayIntro() {
 export async function simulateInstallation() {
   const bar = new cliProgress.SingleBar(
     {
-      format: `Finishing setup... ${chalk.cyan("{bar}")} | {percentage}%`,
+      format: `Finishing setup... ${chalk.greenBright("{bar}")} | {percentage}%`,
       barCompleteChar: "\u2588",
       barIncompleteChar: "\u2591",
       hideCursor: true,
@@ -42,9 +42,9 @@ export function displayManualSteps(projectDirectory, packageManager) {
   const steps = `
   ${chalk.yellow("Automatic installation failed.")} Please finish setup manually:
 
-  1. ${chalk.cyan(`cd ${projectDirectory}`)}
-  2. ${chalk.cyan(`${packageManager} install`)}
-  3. ${chalk.cyan(`${packageManager} run dev`)}
+  1. ${chalk.blueBright(`cd ${projectDirectory}`)}
+  2. ${chalk.blueBright(`${packageManager} install`)}
+  3. ${chalk.blueBright(`${packageManager} run dev`)}
   `;
   console.log(
     boxen(steps, {
@@ -67,8 +67,8 @@ export function displayNextSteps(directoryName, packageManager) {
   const steps = `
   ${chalk.bold("Next steps:")}
 
-  1. ${chalk.cyan(`cd ${directoryName}`)}
-  2. ${chalk.cyan(`${packageManager} run dev`)}
+  1. ${chalk.blueBright(`cd ${directoryName}`)}
+  2. ${chalk.blueBright(`${packageManager} run dev`)}
   `;
 
   console.log(

@@ -16,7 +16,6 @@ export async function collectUserInput(cliProvidedDir) {
 
   const questions = [
     {
-      // Skip this question if directory name is provided
       type: cliProvidedDir ? null : "text",
       name: "directoryName",
       message: "What is your project named?",
@@ -50,18 +49,18 @@ export async function collectUserInput(cliProvidedDir) {
     },
   });
 
-  // Combine answers from CLI and from prompt
   answers = { ...answers, ...promptAnswers };
 
   // Validate the selected package manager
-  const version = getPackageManagerVersion(answers.packageManager);
-  if (!version) {
+  const pmVersion = getPackageManagerVersion(answers.packageManager);
+  if (!pmVersion) {
     throw new Error(`${chalk.bold(answers.packageManager)} is not installed on your system. Please install it to continue.`);
   }
 
+  // Return all answers, including the package manager version with a clear property name
   return {
     ...answers,
     directoryName: answers.directoryName.trim(),
-    version,
+    pmVersion,
   };
 }

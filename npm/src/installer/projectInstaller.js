@@ -12,16 +12,16 @@ import { displayManualSteps, simulateInstallation, displayNextSteps } from "../u
  * Creates a new DocuBook project.
  * @param {Object} options - Installation options.
  */
-export async function createProject({ directoryName, packageManager, version, installNow }) {
+export async function createProject({ directoryName, packageManager, pmVersion, docubookVersion, installNow }) {
   const projectPath = path.resolve(process.cwd(), directoryName);
 
   if (fs.existsSync(projectPath)) {
     throw new Error(`Directory "${directoryName}" already exists.`);
   }
 
-  log.info(`Creating a new DocuBook project in ${chalk.cyan(projectPath)}...`);
+  log.info(`Creating a new DocuBook project in ${chalk.green(projectPath)}...`);
 
-  const spinner = ora("Setting up project files...").start();
+  const spinner = ora("Creating project files...").start();
 
   try {
     // 1. Create project directory and copy template files
@@ -29,25 +29,27 @@ export async function createProject({ directoryName, packageManager, version, in
     const __dirname = path.dirname(__filename);
     const templatePath = path.join(__dirname, "../dist");
     copyDirectoryRecursive(templatePath, projectPath);
-    spinner.succeed("Project files created.");
 
     // 2. Configure package manager specific settings
-    spinner.start("Configuring package manager...");
+    spinner.text = "Configuring package manager...";
     configurePackageManager(packageManager, projectPath);
-    spinner.succeed("Package manager configured.");
 
     // 3. Update package.json
-    spinner.start("Updating package.json...");
+    spinner.text = "Updating package.json...";
     const pkgPath = path.join(projectPath, "package.json");
     if (fs.existsSync(pkgPath)) {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
       pkg.name = directoryName; // Set project name
-      pkg.packageManager = `${packageManager}@${version}`;
+      // Use the package manager version here
+      pkg.packageManager = `${packageManager}@${pmVersion}`;
       fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
     }
-    spinner.succeed("package.json updated.");
 
-    log.success(`DocuBook project ready to go!`);
+    // Combine all success messages into one dynamic line
+    // Use the docubookVersion for the success message
+    spinner.succeed(
+      chalk.green(`Successfully installed DocuBook - v${docubookVersion} with ${packageManager}`)
+    );
 
     if (installNow) {
       await installDependencies(directoryName, packageManager, projectPath);
@@ -97,7 +99,7 @@ function copyDirectoryRecursive(source, destination) {
  */
 async function installDependencies(directoryName, packageManager, projectPath) {
   log.info("Installing dependencies...");
-  const installSpinner = ora(`Running ${chalk.cyan(`${packageManager} install`)}...`).start();
+  const installSpinner = ora(`Running ${chalk.green(`${packageManager} install`)}...`).start();
 
   try {
     execSync(`${packageManager} install`, { cwd: projectPath, stdio: "ignore" });

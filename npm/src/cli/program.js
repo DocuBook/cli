@@ -12,15 +12,17 @@ export function initializeProgram(version) {
   program
     .version(version)
     .description("CLI to create a new DocuBook project")
-    // 1. Define optional argument here (handled below with .argument)
     .argument("[directory]", "The name of the project directory")
-    .action(async (directory) => { // 2. Capture argument in action function
+    .action(async (directory) => {
       try {
         displayIntro();
-        // 3. Pass the argument to the prompt function
-        const options = await collectUserInput(directory);
+        const userInput = await collectUserInput(directory);
 
-        await createProject(options);
+        // Pass all user input AND the DocuBook version to createProject
+        await createProject({
+          ...userInput,
+          docubookVersion: version, // Add DocuBook version here
+        });
       } catch (err) {
         log.error(err.message || "An unexpected error occurred.");
         process.exit(1);
