@@ -95,6 +95,7 @@ jobs:
           
           # Create a Pull Request from the unique remote branch
           gh pr create \
+            --repo DocuBook/docubook \
             --title "chore: Sync package version v${{ steps.get_version.outputs.version }}" \
             --body "$PR_BODY" \
             --base main \
