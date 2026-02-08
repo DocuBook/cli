@@ -76,14 +76,15 @@ jobs:
           
           # =================================================================
           
+          # Add and commit the new content
+          git add .
+          
           # Check if there are any actual changes to commit
           if [[ -z $(git status --porcelain) ]]; then
             echo "No changes to commit."
             exit 0
           fi
           
-          # Add and commit the new content
-          git add .
           git commit -m "chore: Sync package version v${{ steps.get_version.outputs.version }}"
 
           # Define a unique name for the remote branch
