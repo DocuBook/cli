@@ -97,12 +97,7 @@
               "icon": "History",
               "description": "Update and Changes",
               "title": "Release"
-              },
-              "items": [
-                      { "title": "version 1", "href": "/version-1" },
-                      { "title": "version 2", "href": "/version-2" },
-                      { "title": "version 3", "href": "/version-3" }
-              ]
+              }
       }
     ]
 }
