@@ -1,6 +1,6 @@
 "use client";
 
-import { ROUTES, EachRoute } from "@/lib/routes-config";
+import { ROUTES, EachRoute } from "@/lib/routes";
 import SubLink from "./sublink";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ function getCurrentContext(path: string): string | undefined {
   if (!path.startsWith('/docs')) return undefined;
 
   // Extract the first segment after /docs/
-  const match = path.match(/^\/docs\/([^\/]+)/);
+  const match = path.match(/^\/docs\/([^/]+)/);
   return match ? match[1] : undefined;
 }
 

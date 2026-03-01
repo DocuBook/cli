@@ -21,7 +21,7 @@
   "repository": {
     "url": "https://github.com/DocuBook/docubook",
     "editPathTemplate": "/blob/main/{filePath}",
-    "editLink": true
+    "editLink": false
   },
   "sponsor": {
     "title": "Hosted on",
@@ -63,41 +63,44 @@
       "href": "/getting-started",
       "noLink": true,
       "context": {
-              "icon": "Book",
-              "description": "Set up your Documentation",
-              "title": "Guides"
-              },
-              "items": [
-                      { "title": "Introduction", "href": "/introduction" },
-                      { "title": "Quick Start Guide", "href": "/quick-start-guide" },
-                      { "title": "Development", "href": "/development" }
-              ]
+        "icon": "Book",
+        "description": "Set up your Documentation",
+        "title": "Guides"
       },
-      {
-      "title": "Api Reference",
-      "href": "/api-reference",
+      "items": [
+        { "title": "Introduction", "href": "/introduction" },
+        { "title": "Quick Start Guide", "href": "/quick-start-guide" }
+      ]
+    },
+    {
+      "title": "Components",
+      "href": "/components",
       "noLink": true,
       "context": {
-              "icon": "Terminal",
-              "description": "reference for using the API",
-              "title": "API Reference"
-              },
-              "items": [
-                      { "title": "Get", "href": "/get" },
-                      { "title": "Fetch", "href": "/fetch" },
-                      { "title": "Post", "href": "/post" },
-                      { "title": "Delete", "href": "/delete" }
-              ]
+        "icon": "Layers",
+        "description": "Write with Markdown",
+        "title": "Markdown"
       },
-      {
-      "title": "Changelog",
-      "href": "/changelog",
-      "noLink": true,
-      "context": {
-              "icon": "History",
-              "description": "Update and Changes",
-              "title": "Release"
-              }
-      }
+      "items": [
+        { "title": "Accordion", "href": "/accordion" },
+        { "title": "Accordion Group", "href": "/accordion-group" },
+        { "title": "Button", "href": "/button" },
+        { "title": "Card", "href": "/card" },
+        { "title": "Card Group", "href": "/card-group" },
+        { "title": "Code Block", "href": "/code-block" },
+        { "title": "File Tree", "href": "/file-tree" },
+        { "title": "Image", "href": "/image" },
+        { "title": "Keyboard", "href": "/keyboard" },
+        { "title": "Link", "href": "/link" },
+        { "title": "Note", "href": "/note" },
+        { "title": "Release Note", "href": "/release-note" },
+        { "title": "Stepper", "href": "/stepper" },
+        { "title": "Tabs", "href": "/tabs" },
+        { "title": "Tooltips", "href": "/tooltips" },
+        { "title": "Tables", "href": "/tables" },
+        { "title": "Youtube", "href": "/youtube" },
+        { "title": "Custom", "href": "/custom" }
+      ]
+    }
     ]
 }
