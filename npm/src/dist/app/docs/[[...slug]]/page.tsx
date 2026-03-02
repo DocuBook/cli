@@ -85,9 +85,9 @@ export default async function DocsPage(props: PageProps) {
   const tocs = await getDocsTocs(pathName);
 
   return (
-    <div className="flex flex-1 w-full px-0 lg:px-8 lg:pb-10 lg:pt-0">
-      <div className="w-full flex lg:flex-row flex-col items-start bg-card dark:bg-card/25 border border-muted-foreground/20 backdrop-blur-sm rounded-xl shadow-md min-h-[calc(100vh-8rem)]">
-        <div className="flex-7 min-w-0 w-full lg:px-12 px-4 lg:py-8 py-4">
+    <div className="flex flex-1 w-full px-0 lg:px-8 pb-24">
+      <div className="w-full flex lg:flex-row flex-col items-start bg-card dark:bg-card/20 border border-muted-foreground/20 backdrop-blur-sm rounded-xl shadow-md">
+        <div className="flex-7 min-w-0 w-full lg:px-8 px-4 lg:py-8 py-4">
           <MobToc tocs={tocs} />
           <DocsBreadcrumb paths={slug} />
           <Typography>

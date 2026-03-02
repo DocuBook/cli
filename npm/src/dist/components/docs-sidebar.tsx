@@ -54,6 +54,9 @@ export default function MobToc({ tocs }: MobTocProps) {
   // Only show on /docs pages
   const isDocsPage = useMemo(() => pathname?.startsWith('/docs'), [pathname]);
 
+  // Get title from path segment (last part of URL)
+  const pageTitle = pathname?.split('/').filter(Boolean).pop() || '';
+
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -105,7 +108,7 @@ export default function MobToc({ tocs }: MobTocProps) {
         exit={{ y: -100, opacity: 0 }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
       >
-        <div className="w-full bg-background/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-800 shadow-sm rounded-t-xl">
+        <div className="w-full bg-background/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-800 shadow-sm">
           <div className="p-2">
             <div className="flex items-center gap-2">
               <Sheet>
@@ -144,7 +147,7 @@ export default function MobToc({ tocs }: MobTocProps) {
                 aria-label={isExpanded ? 'Collapse table of contents' : 'Expand table of contents'}
               >
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm">On this page</span>
+                  <span className="font-medium text-sm capitalize">{pageTitle || 'On this page'}</span>
                 </div>
                 {chevronIcon}
               </Button>
