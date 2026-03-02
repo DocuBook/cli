@@ -19,58 +19,11 @@ export default function TocObserver({
   onActiveIdChange
 }: TocObserverProps) {
   const [internalActiveId, setInternalActiveId] = useState<string | null>(null);
-  // const observer = useRef<IntersectionObserver | null>(null);
   const [clickedId, setClickedId] = useState<string | null>(null);
   const itemRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
 
-  // Use external activeId if provided, otherwise use internal state
   const activeId = externalActiveId !== undefined ? externalActiveId : internalActiveId;
   const setActiveId = onActiveIdChange || setInternalActiveId;
-
-  // Track scroll position to find the most accurate active section
-  useEffect(() => {
-    const handleScroll = () => {
-      if (clickedId) return;
-
-      const headingElements = data
-        .map((item) => document.getElementById(item.href.slice(1)))
-        .filter(Boolean) as HTMLElement[];
-
-      if (headingElements.length === 0) return;
-
-      let newActiveId = headingElements[0].id;
-
-      // We check from the bottom up, finding the first heading that we've scrolled past.
-      // 120px threshold covers the 80px (scroll-m-20) spacing + a comfortable reading buffer.
-      const threshold = 120;
-
-      for (let i = headingElements.length - 1; i >= 0; i--) {
-        const el = headingElements[i];
-        const rect = el.getBoundingClientRect();
-
-        if (rect.top <= threshold) {
-          newActiveId = el.id;
-          break;
-        }
-      }
-
-      // Fallback if scrolled to the absolute bottom of the document
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
-      if (isAtBottom) {
-        newActiveId = headingElements[headingElements.length - 1].id;
-      }
-
-      if (newActiveId !== activeId) {
-        setActiveId(newActiveId);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    // Trigger handler initially
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [data, activeId, clickedId, setActiveId]);
 
   const handleLinkClick = useCallback((id: string) => {
     setClickedId(id);

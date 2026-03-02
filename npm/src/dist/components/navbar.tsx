@@ -16,7 +16,7 @@ interface NavbarProps {
 export function Navbar({ id }: NavbarProps) {
 
   return (
-    <nav id={id} className="sticky! top-0 z-50 w-full h-16 border-b bg-background">
+    <nav id={id} className="sticky top-0 z-50 w-full h-16 border-b bg-background">
       <div className="sm:container mx-auto w-[95vw] h-full flex items-center justify-between md:gap-2">
         <div className="flex items-center gap-5">
           <SheetLeftbar />

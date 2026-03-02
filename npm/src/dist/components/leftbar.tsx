@@ -18,7 +18,7 @@ import Search from "@/components/Search";
 
 export function Leftbar() {
   return (
-    <aside className="sticky! hidden top-0 h-screen w-[260px] shrink-0 lg:flex flex-col">
+    <aside className="sticky hidden top-0 h-screen w-[260px] shrink-0 lg:flex flex-col">
       {/* Logo */}
       <div className="flex items-center h-14 px-5 shrink-0">
         <Logo />
