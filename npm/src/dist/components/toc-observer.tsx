@@ -19,7 +19,7 @@ export default function TocObserver({
   onActiveIdChange
 }: TocObserverProps) {
   const [internalActiveId, setInternalActiveId] = useState<string | null>(null);
-  const observer = useRef<IntersectionObserver | null>(null);
+  // const observer = useRef<IntersectionObserver | null>(null);
   const [clickedId, setClickedId] = useState<string | null>(null);
   const itemRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
 
@@ -27,64 +27,50 @@ export default function TocObserver({
   const activeId = externalActiveId !== undefined ? externalActiveId : internalActiveId;
   const setActiveId = onActiveIdChange || setInternalActiveId;
 
-  // Handle intersection observer for auto-highlighting
+  // Track scroll position to find the most accurate active section
   useEffect(() => {
-    const handleIntersect = (entries: IntersectionObserverEntry[]) => {
-      const visibleEntries = entries.filter(entry => entry.isIntersecting);
+    const handleScroll = () => {
+      if (clickedId) return;
 
-      // Find the most recently scrolled-into-view element
-      const mostVisibleEntry = visibleEntries.reduce((prev, current) => {
-        // Prefer the entry that's more visible or higher on the page
-        const prevRatio = prev?.intersectionRatio || 0;
-        const currentRatio = current.intersectionRatio;
+      const headingElements = data
+        .map((item) => document.getElementById(item.href.slice(1)))
+        .filter(Boolean) as HTMLElement[];
 
-        if (currentRatio > prevRatio) return current;
-        if (currentRatio === prevRatio &&
-            current.boundingClientRect.top < prev.boundingClientRect.top) {
-          return current;
+      if (headingElements.length === 0) return;
+
+      let newActiveId = headingElements[0].id;
+
+      // We check from the bottom up, finding the first heading that we've scrolled past.
+      // 120px threshold covers the 80px (scroll-m-20) spacing + a comfortable reading buffer.
+      const threshold = 120;
+
+      for (let i = headingElements.length - 1; i >= 0; i--) {
+        const el = headingElements[i];
+        const rect = el.getBoundingClientRect();
+
+        if (rect.top <= threshold) {
+          newActiveId = el.id;
+          break;
         }
-        return prev;
-      }, visibleEntries[0]);
+      }
 
-      if (mostVisibleEntry && !clickedId) {
-        const newActiveId = mostVisibleEntry.target.id;
-        if (newActiveId !== activeId) {
-          setActiveId(newActiveId);
-        }
+      // Fallback if scrolled to the absolute bottom of the document
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+      if (isAtBottom) {
+        newActiveId = headingElements[headingElements.length - 1].id;
+      }
+
+      if (newActiveId !== activeId) {
+        setActiveId(newActiveId);
       }
     };
 
-    observer.current = new IntersectionObserver(handleIntersect, {
-      root: null,
-      rootMargin: "-20% 0px -70% 0px", // Adjusted margins for better section detection
-      threshold: [0, 0.1, 0.5, 0.9, 1], // Multiple thresholds for better accuracy
-    });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Trigger handler initially
+    handleScroll();
 
-    const elements = data.map((item) =>
-      document.getElementById(item.href.slice(1))
-    );
-
-    elements.forEach((el) => {
-      if (el && observer.current) {
-        observer.current.observe(el);
-      }
-    });
-
-    // Set initial active ID if none is set
-    if (!activeId && elements[0]) {
-      setActiveId(elements[0].id);
-    }
-
-    return () => {
-      if (observer.current) {
-        elements.forEach((el) => {
-          if (el) {
-            observer.current!.unobserve(el);
-          }
-        });
-      }
-    };
-  }, [data, clickedId, activeId, setActiveId]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [data, activeId, clickedId, setActiveId]);
 
   const handleLinkClick = useCallback((id: string) => {
     setClickedId(id);
@@ -132,6 +118,10 @@ export default function TocObserver({
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Initial calculation
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [activeId]);
 
@@ -215,7 +205,7 @@ export default function TocObserver({
                   }}
                 >
                   {/* Circle indicator */}
-                  <div className="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
+                  <div className="relative w-4 h-4 flex items-center justify-center shrink-0">
                     <div className={clsx(
                       "w-1.5 h-1.5 rounded-full transition-all duration-300 relative z-10",
                       {

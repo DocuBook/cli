@@ -20,10 +20,14 @@ const docuConfig = docuData as {
   footer: FooterConfig;
 };
 
-export function Footer() {
+interface FooterProps {
+  id?: string;
+}
+
+export function Footer({ id }: FooterProps) {
   const { footer } = docuConfig;
   return (
-    <footer className="w-full py-8 border-t bg-background">
+    <footer id={id} className="w-full py-8 border-t bg-background">
       <div className="container flex flex-col lg:flex-row items-center justify-between text-sm">
         <div className="flex flex-col items-center lg:items-start justify-start gap-4 w-full lg:w-3/5 text-center lg:text-left">
             <p className="text-muted-foreground">

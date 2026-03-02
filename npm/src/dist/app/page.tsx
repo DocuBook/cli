@@ -11,7 +11,7 @@ export const metadata = getMetadata({
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center px-2 py-8 text-center sm:py-36">
+    <div className="flex flex-col items-center justify-center px-2 py-36 text-center">
       <div className="w-full max-w-[800px] pb-8">
         <h1 className="mb-4 text-2xl font-bold sm:text-5xl">DocuBook Starter Templates</h1>
         <p className="mb-8 sm:text-xl text-muted-foreground">

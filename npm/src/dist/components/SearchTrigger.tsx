@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 export function SearchTrigger() {
   return (
     <DialogTrigger asChild>
-      <div className="relative flex-1 cursor-pointer max-w-[140px]">
+      <div className="relative flex-1 cursor-pointer">
         <div className="flex items-center">
           <div className="md:hidden p-2 -ml-2">
             <SearchIcon className="h-5 w-5 text-muted-foreground" />

@@ -7,7 +7,7 @@ import { Footer } from "@/components/footer";
 import docuConfig from "@/docu.json";
 import "@docsearch/css";
 import "@/styles/algolia.css";
-import "@/styles/syntax.css";
+import "@/styles/override.css";
 import "@/styles/globals.css";
 
 const { meta } = docuConfig;
@@ -85,11 +85,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="sm:container mx-auto w-[90vw] h-auto scroll-smooth">
+          <Navbar id="main-navbar" />
+          <main id="main-content" className="sm:container mx-auto w-[90vw] h-auto scroll-smooth">
             {children}
           </main>
-          <Footer />
+          <Footer id="main-footer" />
         </ThemeProvider>
       </body>
     </html>
