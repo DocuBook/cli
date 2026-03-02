@@ -12,9 +12,9 @@ import { PanelRight } from "lucide-react";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DocsMenu from "@/components/docs-menu";
-import { ModeToggle } from "@/components/theme-toggle";
-import ContextPopover from "@/components/context-popover";
-import Search from "@/components/search";
+import { ModeToggle } from "@/components/ThemeToggle";
+import ContextPopover from "@/components/ContextPopover";
+import Search from "@/components/Search";
 
 export function Leftbar() {
   return (
@@ -58,16 +58,16 @@ export function SheetLeftbar() {
           Main navigation menu with links to different sections
         </DialogDescription>
         <SheetHeader>
-          <SheetClose className="px-5" asChild>
-            <span className="px-2"><Logo /></span>
+          <SheetClose className="px-4" asChild>
+            <div className="flex items-center justify-start gap-16">
+              <span className="px-2"><Logo /></span>
+              <ModeToggle />
+            </div>
           </SheetClose>
         </SheetHeader>
         <div className="flex flex-col gap-4 overflow-y-auto">
           <div className="flex flex-col gap-2.5 mt-3 mx-2 px-5">
             <NavMenu isSheet />
-          </div>
-          <div className="flex w-2/4 px-5">
-            <ModeToggle />
           </div>
         </div>
       </SheetContent>

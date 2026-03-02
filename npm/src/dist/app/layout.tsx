@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/navbar";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Footer } from "@/components/footer";
+import { SearchProvider } from "@/components/SearchContext";
 import docuConfig from "@/docu.json";
 import "@docsearch/css";
 import "@/styles/algolia.css";
@@ -85,11 +86,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar id="main-navbar" />
-          <main id="main-content" className="sm:container mx-auto w-[90vw] h-auto scroll-smooth">
-            {children}
-          </main>
-          <Footer id="main-footer" />
+          <SearchProvider>
+            <Navbar id="main-navbar" />
+            <main id="main-content" className="sm:container mx-auto w-[90vw] h-auto scroll-smooth">
+              {children}
+            </main>
+            <Footer id="main-footer" />
+          </SearchProvider>
         </ThemeProvider>
       </body>
     </html>

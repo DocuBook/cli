@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/navbar";
 import DocsMenu from "@/components/docs-menu";
-import { ModeToggle } from "@/components/theme-toggle";
+import { ModeToggle } from "@/components/ThemeToggle";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import ContextPopover from "@/components/context-popover";
+import ContextPopover from "@/components/ContextPopover";
 import TocObserver from "./toc-observer";
 import * as React from "react";
 import { useRef, useMemo } from "react";
@@ -21,7 +21,7 @@ import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useActiveSection } from "@/hooks";
 import { TocItem } from "@/lib/toc";
-import Search from "@/components/search";
+import Search from "@/components/Search";
 
 interface MobTocProps {
   tocs: TocItem[];
@@ -120,9 +120,10 @@ export default function MobToc({ tocs }: MobTocProps) {
                     Main navigation menu with links to different sections
                   </DialogDescription>
                   <SheetHeader>
-                    <SheetClose className="px-5" asChild>
-                      <div className="flex items-center justify-between">
+                    <SheetClose className="px-4" asChild>
+                      <div className="flex items-center justify-start gap-16">
                         <span className="px-2"><Logo /></span>
+                        <ModeToggle />
                       </div>
                     </SheetClose>
                   </SheetHeader>
@@ -131,9 +132,6 @@ export default function MobToc({ tocs }: MobTocProps) {
                       <ContextPopover />
                       <DocsMenu isSheet />
                     </div>
-                  </div>
-                  <div className="flex w-2/4 px-5">
-                    <ModeToggle />
                   </div>
                 </SheetContent>
               </Sheet>

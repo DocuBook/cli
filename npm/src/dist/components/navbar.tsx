@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import Search from "@/components/search";
+import Search from "@/components/Search";
 import Anchor from "@/components/anchor";
 import { SheetLeftbar } from "@/components/leftbar";
 import { SheetClose } from "@/components/ui/sheet";

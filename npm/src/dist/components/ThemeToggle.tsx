@@ -18,8 +18,8 @@ export function ModeToggle() {
   if (!mounted) {
     return (
       <div className="flex items-center gap-1 rounded-full border border-border bg-background/50 p-1">
-        <div className="rounded-full p-0.5 w-1 h-1" />
-        <div className="rounded-full p-0.5 w-1 h-1" />
+        <div className="rounded-full p-0 w-1 h-1" />
+        <div className="rounded-full p-0 w-1 h-1" />
       </div>
     );
   }
@@ -49,7 +49,7 @@ export function ModeToggle() {
         value="light"
         size="xs"
         aria-label="Light Mode"
-        className={`rounded-full cursor-pointer p-1 transition-all ${activeTheme === "light"
+        className={`rounded-full cursor-pointer p-0.5 transition-all ${activeTheme === "light"
           ? "bg-primary text-primary-foreground"
           : "bg-transparent hover:bg-muted/50"
           }`}
@@ -60,7 +60,7 @@ export function ModeToggle() {
         value="dark"
         size="xs"
         aria-label="Dark Mode"
-        className={`rounded-full cursor-pointer p-1 transition-all ${activeTheme === "dark"
+        className={`rounded-full cursor-pointer p-0.5 transition-all ${activeTheme === "dark"
           ? "bg-primary text-primary-foreground"
           : "bg-transparent hover:bg-muted/50"
           }`}
